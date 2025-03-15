@@ -224,22 +224,56 @@
     Recuerda estudiar 2 minutos, un día sí y un día no. <br> Nos vemos la próxima semana para cambiar el color rojo 🔴 a verde 🟢
 </div>
     </div>
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         // Configuración de Firebase
+// Importar las funciones necesarias de Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAclp6t7pf4H9cwZvLs2-8Y7S6w0pyS8zc",
-      authDomain: "sacaldos.firebaseapp.com",
-      projectId: "sacaldos",
-      storageBucket: "sacaldos.firebasestorage.app",
-      messagingSenderId: "130196984879",
-      appId: "1:130196984879:web:967debe0ab4fb74cc2e2da",
-      measurementId: "G-PLWFH0J4HC"
+  authDomain: "sacaldos.firebaseapp.com",
+  projectId: "sacaldos",
+  storageBucket: "sacaldos.firebasestorage.app",
+  messagingSenderId: "130196984879",
+  appId: "1:130196984879:web:967debe0ab4fb74cc2e2da",
+  measurementId: "G-PLWFH0J4HC"
 };
 
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+// Referencia a la base de datos
+const dbRef = ref(database, 'temas');
+
+// Función para obtener los temas desde Firebase
+const getTopicsFromFirebase = async () => {
+  try {
+    const snapshot = await get(dbRef);
+    const data = snapshot.val();
+    const topics = data ? Object.values(data).map(item => item.titulo) : [];
+    console.log('Temas obtenidos:', topics);
+    return topics;
+  } catch (error) {
+    console.error("Error al obtener temas:", error);
+    return [];
+  }
+};
+
+// Llamamos a la función
+getTopicsFromFirebase();
+
+;
+
 // Inicializa Firebase
-firebase.initializeApp(firebaseConfig);
+
 
 // Referencia a la base de datos
 const dbRef = firebase.database().ref('temas');
