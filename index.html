@@ -319,23 +319,27 @@
                 const beforeButton = document.createElement('button');
                 beforeButton.className = 'topic-btn';
                 beforeButton.textContent = topic;
+                beforeButton.setAttribute('data-topic', topic);
                 beforeButton.onclick = () => highlightTopic('before', topic);
                 beforeContainer.appendChild(beforeButton);
 
                 const afterButton = document.createElement('button');
                 afterButton.className = 'topic-btn';
                 afterButton.textContent = topic;
+                afterButton.setAttribute('data-topic', topic);
                 afterButton.onclick = () => highlightTopic('after', topic);
                 afterContainer.appendChild(afterButton);
 
                 const exportBeforeButton = document.createElement('button');
                 exportBeforeButton.className = 'topic-btn';
                 exportBeforeButton.textContent = topic;
+                exportBeforeButton.setAttribute('data-topic', topic);
                 exportBeforeContainer.appendChild(exportBeforeButton);
 
                 const exportAfterButton = document.createElement('button');
                 exportAfterButton.className = 'topic-btn';
                 exportAfterButton.textContent = topic;
+                exportAfterButton.setAttribute('data-topic', topic);
                 exportAfterContainer.appendChild(exportAfterButton);
 
                 // Botón de eliminar
@@ -387,24 +391,19 @@
         }
 
         function updateHighlights() {
-            const updateButtonStyle = (btn, section, topic) => {
-                const topicId = `${section}-${topic}`;
-                updateButtonColor(btn, section, topic);
-            };
+            topics.forEach(topic => {
+                ['before', 'after'].forEach(section => {
+                    const topicId = `${section}-${topic}`;
+                    const button = document.querySelector(`#${section}-topics .topic-btn[data-topic="${topic}"]`);
+                    const exportButton = document.querySelector(`#export-${section}-topics .topic-btn[data-topic="${topic}"]`);
 
-            ['before', 'after'].forEach(section => {
-                const container = document.getElementById(`${section}-topics`);
-                const exportContainer = document.getElementById(`export-${section}-topics`);
-                if (container) {
-                    container.querySelectorAll('.topic-btn').forEach(btn => {
-                        updateButtonStyle(btn, section, btn.textContent);
-                    });
-                }
-                if (exportContainer) {
-                    exportContainer.querySelectorAll('.topic-btn').forEach(btn => {
-                        updateButtonStyle(btn, section, btn.textContent);
-                    });
-                }
+                    if (button) {
+                        updateButtonColor(button, section, topic);
+                    }
+                    if (exportButton) {
+                        updateButtonColor(exportButton, section, topic);
+                    }
+                });
             });
         }
 
