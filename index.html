@@ -227,18 +227,45 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-        const topics = [
-            "¿QUÉ ES EL GELATO?",
-            "¿CUÁNTOS TIPOS DE GELATOS TENEMOS?",
-            "¿QUÉ ES LA REGLA DE LOS 2 SEGUNDOS?",
-            "¿CUÁLES SON LOS 3 PUNTOS ESTRATÉGICOS DEL MTV?",
-            "¿QUÉ SIGNIFICA FOPA?",
-            "¿QUÉ SON LOS GELATOS KETO?",
-            "5 PASOS DE SERVICIO EN VITRINA",
-            "5 PASOS DE SERVICIO EN MESA",
-            "5 PASOS DE SERVICIO EN CAJA",
-            "3 PILARES DE ALDO`S"
-        ];
+        // Configuración de Firebase
+const firebaseConfig = {
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_AUTH_DOMAIN",
+  databaseURL: "TU_DATABASE_URL",
+  projectId: "TU_PROJECT_ID",
+  storageBucket: "TU_STORAGE_BUCKET",
+  messagingSenderId: "TU_MESSAGING_SENDER_ID",
+  appId: "TU_APP_ID"
+};
+
+// Inicializa Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Referencia a la base de datos
+const dbRef = firebase.database().ref('temas');
+
+// Función para obtener los temas desde Firebase
+const getTopicsFromFirebase = async () => {
+  try {
+    const snapshot = await dbRef.once('value');
+    const data = snapshot.val();
+
+    // Convertimos los temas en un array si es necesario
+    const topics = data ? Object.values(data).map(item => item.titulo) : [];
+
+    console.log(topics); // Verifica si los temas se obtienen correctamente
+    return topics;
+  } catch (error) {
+    console.error("Error al obtener temas:", error);
+    return [];
+  }
+};
+
+// Llamamos a la función
+getTopicsFromFirebase().then(topics => {
+  console.log('Temas obtenidos:', topics);
+});
+
 
         let selectedColor = '#2196F3';
         const highlights = {};
