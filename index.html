@@ -319,13 +319,13 @@
                 const beforeButton = document.createElement('button');
                 beforeButton.className = 'topic-btn';
                 beforeButton.textContent = topic;
-                beforeButton.onclick = () => highlightTopic('before-' + topic);
+                beforeButton.onclick = () => highlightTopic('before', topic);
                 beforeContainer.appendChild(beforeButton);
 
                 const afterButton = document.createElement('button');
                 afterButton.className = 'topic-btn';
                 afterButton.textContent = topic;
-                afterButton.onclick = () => highlightTopic('after-' + topic);
+                afterButton.onclick = () => highlightTopic('after', topic);
                 afterContainer.appendChild(afterButton);
 
                 const exportBeforeButton = document.createElement('button');
@@ -348,7 +348,26 @@
                 };
                 beforeButton.appendChild(deleteBtn);
                 afterButton.appendChild(deleteBtn.cloneNode(true));
+
+                // Aplicar colores guardados
+                updateButtonColor(beforeButton, 'before', topic);
+                updateButtonColor(afterButton, 'after', topic);
+                updateButtonColor(exportBeforeButton, 'before', topic);
+                updateButtonColor(exportAfterButton, 'after', topic);
             });
+        }
+
+        function updateButtonColor(button, section, topic) {
+            const topicId = `${section}-${topic}`;
+            if (highlights[topicId]) {
+                button.style.borderLeft = `4px solid ${highlights[topicId]}`;
+                button.style.backgroundColor = `${highlights[topicId]}15`;
+                button.style.paddingLeft = '20px';
+            } else {
+                button.style.borderLeft = 'none';
+                button.style.backgroundColor = 'white';
+                button.style.paddingLeft = '15px';
+            }
         }
 
         function selectColor(color) {
@@ -361,30 +380,31 @@
             });
         }
 
-        function highlightTopic(topicId) {
+        function highlightTopic(section, topic) {
+            const topicId = `${section}-${topic}`;
             highlights[topicId] = selectedColor;
             updateHighlights();
         }
 
         function updateHighlights() {
-            const updateButtonStyle = (btn, container, topic) => {
-                const topicId = (container.includes('before') ? 'before-' : 'after-') + topic;
-                if (highlights[topicId]) {
-                    btn.style.borderLeft = `4px solid ${highlights[topicId]}`;
-                    btn.style.backgroundColor = `${highlights[topicId]}15`;
-                    btn.style.paddingLeft = '20px';
-                } else {
-                    btn.style.borderLeft = 'none';
-                    btn.style.backgroundColor = 'white';
-                    btn.style.paddingLeft = '15px';
-                }
+            const updateButtonStyle = (btn, section, topic) => {
+                const topicId = `${section}-${topic}`;
+                updateButtonColor(btn, section, topic);
             };
 
-            ['before-topics', 'after-topics', 'export-before-topics', 'export-after-topics'].forEach(containerId => {
-                const container = document.getElementById(containerId);
-                container.querySelectorAll('.topic-btn').forEach(btn => {
-                    updateButtonStyle(btn, containerId, btn.textContent);
-                });
+            ['before', 'after'].forEach(section => {
+                const container = document.getElementById(`${section}-topics`);
+                const exportContainer = document.getElementById(`export-${section}-topics`);
+                if (container) {
+                    container.querySelectorAll('.topic-btn').forEach(btn => {
+                        updateButtonStyle(btn, section, btn.textContent);
+                    });
+                }
+                if (exportContainer) {
+                    exportContainer.querySelectorAll('.topic-btn').forEach(btn => {
+                        updateButtonStyle(btn, section, btn.textContent);
+                    });
+                }
             });
         }
 
