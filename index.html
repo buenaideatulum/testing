@@ -232,43 +232,47 @@
     <script>
         // Configuración de Firebase
 // Importar las funciones necesarias de Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-
-// Configuración de Firebase
+// Importar Firebase de manera correcta
 const firebaseConfig = {
   apiKey: "AIzaSyAclp6t7pf4H9cwZvLs2-8Y7S6w0pyS8zc",
   authDomain: "sacaldos.firebaseapp.com",
+  databaseURL: "https://sacaldos-default-rtdb.firebaseio.com/", // Agrega esta línea
   projectId: "sacaldos",
-  storageBucket: "sacaldos.firebasestorage.app",
+  storageBucket: "sacaldos.appspot.com", 
   messagingSenderId: "130196984879",
   appId: "1:130196984879:web:967debe0ab4fb74cc2e2da",
   measurementId: "G-PLWFH0J4HC"
 };
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
-
-// Referencia a la base de datos
-const dbRef = ref(database, 'temas');
+const app = firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
 // Función para obtener los temas desde Firebase
 const getTopicsFromFirebase = async () => {
   try {
-    const snapshot = await get(dbRef);
+    const snapshot = await database.ref('temas').once('value');
     const data = snapshot.val();
+
     const topics = data ? Object.values(data).map(item => item.titulo) : [];
     console.log('Temas obtenidos:', topics);
-    return topics;
+
+    renderTopics(topics);
   } catch (error) {
     console.error("Error al obtener temas:", error);
-    return [];
   }
 };
 
-// Llamamos a la función
-getTopicsFromFirebase();
+const renderTopics = (topics) => {
+  const beforeContainer = document.getElementById('before-topics');
+  beforeContainer.innerHTML = '';
+
+  topics.forEach(topic => {
+    const btn = document.createElement('button');
+    btn.classList.add('topic-btn');
+    btn.textContent = topic;
+    beforeContainer.appendChild(btn);
+  });
+};
 
 ;
 
